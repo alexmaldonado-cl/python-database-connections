@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+import mysql.connector
 
 load_dotenv()
 
@@ -25,8 +26,24 @@ connections = {
     }
 }
 
-def get_connection():
+def get_connection_config():
     return connections[get_main_driver()]
+
+
+def get_connection():
+    try:
+        config = get_connection_config()
+
+        return mysql.connector.connect(
+            user     = config['username'],
+            password = config['password'],
+            host     = config['host'],
+            database = config['database']
+        )
+
+    except Exception as e:
+        raise Exception('No connection defined for driver: ' + get_main_driver())
+
 
 
 
